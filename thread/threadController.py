@@ -16,7 +16,7 @@ def writePage():
 @thread.route('/upload', methods=['POST'])
 def writePost():
     print("check writepost")
-    db = get_db("school")
+    db = get_db()
     threads = db['thread']
 
     title = request.form['title']
@@ -34,7 +34,7 @@ def writePost():
 @thread.route('/all', methods=['GET'])
 def allThreads():
     print("check allthread")
-    db = get_db("school")
+    db = get_db()
     
     threads = list(db['thread'].find().sort("uploadDate", -1))
     
@@ -45,7 +45,7 @@ def allThreads():
 @thread.route('/<thread_id>')
 def getOne(thread_id):
     convId = ObjectId(thread_id)
-    db = get_db("school")
+    db = get_db()
 
     doc = db.find_one({"_id": convId})
     return doc
