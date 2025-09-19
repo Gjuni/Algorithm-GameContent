@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to SK Sheidus</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+
+    <style>
+        html, body {
+            height: 100%;
+        }
+        .hero-section {
+            height: 100vh;
+            background: 
+                linear-gradient(rgba(76, 51, 149, 0.8), rgba(51, 85, 187, 0.8)), 
+                url('https://images.unsplash.com/photo-1555066931-4365d1469c9b?q=80&w=2070&auto=format&fit=crop') no-repeat center center;
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="hero-section">
+        <div class="container text-center text-white">
+            
+            <h1 class="display-3 fw-bold">Welcome to Algorithm and Game Content</h1>
+            
+            <p class="lead my-4">
+                This is website for the student Thread Service.
+            </p>
+            
+            <form action="{{ url_for('user.index') }}" method="get">
+                <button type="submit" class="btn btn-success btn-lg px-4 fw-bold border border-dark">LOGIN</button>
+            </form>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+</body> 
+</html>

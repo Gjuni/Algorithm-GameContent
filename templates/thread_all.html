@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>게시글 목록</title>
+    <meta name="viewport" content="initial-scale=1.0; maximum-scale=1.0; width=device-width;">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700,300,100" rel="stylesheet">
+    <style>
+        body {
+            
+            background-color: #a8d8ff;
+            font-family: "Roboto", helvetica, arial, sans-serif;
+            font-size: 16px;
+            font-weight: 400;
+            text-rendering: optimizeLegibility;
+        }
+
+        div.table-title {
+            display: block;
+            margin: auto;
+            max-width: 90%;
+            padding: 5px;
+            width: 100%;
+        }
+
+        .table-title h3 {
+            color: #0b0a0a;
+            font-size: 30px;
+            font-weight: 400;
+            font-style: normal;
+            font-family: "Roboto", helvetica, arial, sans-serif;
+            text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.1);
+            text-transform: uppercase;
+            padding-bottom: 10px;
+        }
+        
+        .write-link {
+            color: #fff;
+            background-color: #4E5066;
+            padding: 8px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+        .write-link:hover {
+            background-color: #666B85;
+        }
+
+        .table-fill {
+            background: white;
+            border-radius: 3px;
+            border-collapse: collapse;
+            margin: auto;
+            max-width: 90%;
+            padding: 5px;
+            width: 100%;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            animation: float 5s infinite;
+        }
+
+        th {
+            color: #D5DDE5;
+            background: #186a02;
+            border-bottom: 4px solid #9ea7af;
+            border-right: 1px solid #343a45;
+            font-size: 18px;
+            font-weight: 100;
+            padding: 20px;
+            text-align: left;
+            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+            vertical-align: middle;
+        }
+
+        th:first-child { border-top-left-radius: 3px; }
+        th:last-child { border-top-right-radius: 3px; border-right: none; }
+
+        tr {
+            border-top: 1px solid #C1C3D1;
+            color: #091852;
+            font-size: 16px;
+            font-weight: normal;
+            text-shadow: 0 1px 1px rgba(255, 255, 255, 0.1);
+        }
+        
+        /* [변경] 호버 기능을 하나로 통합하고 정리 */
+        tbody tr.clickable-row {
+            cursor: pointer; /* 마우스 오버 시 손가락 모양으로 변경 */
+        }
+        
+        tbody tr.clickable-row:hover td {
+             background: #e9ecef; /* 마우스를 올렸을 때 적용될 통일된 회색 */
+             color: #e80c00; /* 가독성을 위한 어두운 글자색 */
+        }
+
+        tr:first-child { border-top: none; }
+        tr:last-child { border-bottom: none; }
+        tr:nth-child(odd) td { background: #EBEBEB; }
+        /* tr:nth-child(odd):hover td 규칙은 위에서 통합되었으므로 삭제해도 무방 */
+        tr:last-child td:first-child { border-bottom-left-radius: 3px; }
+        tr:last-child td:last-child { border-bottom-right-radius: 3px; }
+
+        td {
+            background: #FFFFFF;
+            padding: 20px;
+            text-align: left;
+            vertical-align: middle;
+            font-weight: 300;
+            font-size: 16px;
+            text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.1);
+            border-right: 1px solid #C1C3D1;
+            word-break: break-all;
+        }
+        
+        td:first-child {
+            font-weight: 500;
+        }
+
+        td:last-child { border-right: 0px; }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="table-title">
+        <h3>게시글 목록</h3>
+        <a href="{{ url_for('threadAll.writePage') }}" class="write-link">글쓰기</a>
+        <a href="{{ url_for('threadAll.dailyNews') }}" class="write-link">데일리시큐 이슈</a>
+        <a href="{{ url_for('threadAll.secureNews') }}" class="write-link">보안 뉴스</a>
+    </div>
+
+    <table class="table-fill">
+        <thead>
+            <tr>
+                <th style="width: 35%; color: white;">제목</th>
+                <th style="width: 45%;color:white;">내용</th>
+                <th style="width: 20%;color:white">업로드 날짜</th>
+            </tr>
+        </thead>
+        <tbody class="table-hover">
+            {% for t in threads %}
+            <tr class="clickable-row" data-href="{{ url_for('threadSpec.getOne', thread_id=t._id|string) }}">
+                <td>
+                    {{ t.threadTitle }}
+                </td>
+                <td>{{ t.threadBody }}</td>
+                <td>{{ t.uploadDate }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <script>
+      const rows = document.querySelectorAll('.clickable-row');
+      rows.forEach(row => {
+        row.addEventListener('click', () => {
+          window.location.href = row.dataset.href;
+        });
+      });
+    </script>
+
+</body>
+</html>

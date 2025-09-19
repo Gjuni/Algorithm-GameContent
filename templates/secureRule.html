@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>보안 뉴스</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700,300,100" rel="stylesheet">
+    <style>
+        body {
+            background-color: #a8d8ff;
+            font-family: "Roboto", helvetica, arial, sans-serif;
+            font-size: 16px;
+            font-weight: 400;
+            text-rendering: optimizeLegibility;
+        }
+
+        div.table-title {
+            display: block;
+            margin: auto;
+            max-width: 90%;
+            padding: 5px;
+            width: 100%;
+        }
+
+        .table-title h3 {
+            color: #0b0a0a;
+            font-size: 30px;
+            font-weight: 400;
+            font-style: normal;
+            font-family: "Roboto", helvetica, arial, sans-serif;
+            text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.1);
+            text-transform: uppercase;
+            padding-bottom: 10px;
+        }
+        
+        /* '뒤로가기' 버튼 기본 스타일 */
+        .write-link {
+            color: #fff;
+            background-color: red;
+            padding: 8px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+        .write-link:hover {
+            background-color: #666B85;
+        }
+
+        /* [수정] 버튼들을 우측 상단에 배치하기 위한 컨테이너 스타일 */
+        .top-right-container {
+            position: absolute;
+            top: 25px;
+            right: 5%;
+            display: flex;
+            gap: 10px; /* 버튼 사이 간격 */
+        }
+
+        .table-fill {
+            background: white;
+            border-radius: 3px;
+            border-collapse: collapse;
+            margin: auto;
+            max-width: 90%;
+            padding: 5px;
+            width: 100%;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            animation: float 5s infinite;
+        }
+
+        th {
+            color: #D5DDE5;
+            background: #186a02;
+            border-bottom: 4px solid #9ea7af;
+            border-right: 1px solid #343a45;
+            font-size: 18px;
+            font-weight: 100;
+            padding: 20px;
+            text-align: left;
+            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+            vertical-align: middle;
+        }
+
+        th:first-child { border-top-left-radius: 3px; }
+        th:last-child { border-top-right-radius: 3px; border-right: none; }
+
+        tr {
+            border-top: 1px solid #C1C3D1;
+            color: #091852;
+            font-size: 16px;
+            font-weight: normal;
+            text-shadow: 0 1px 1px rgba(255, 255, 255, 0.1);
+        }
+        
+        tbody tr:hover td {
+            background: #e9ecef;
+            color: #e80c00;
+        }
+
+        tr:first-child { border-top: none; }
+        tr:last-child { border-bottom: none; }
+        tr:nth-child(odd) td { background: #EBEBEB; }
+        tr:last-child td:first-child { border-bottom-left-radius: 3px; }
+        tr:last-child td:last-child { border-bottom-right-radius: 3px; }
+
+        td {
+            background: #FFFFFF;
+            padding: 20px;
+            text-align: left;
+            vertical-align: middle;
+            font-weight: 300;
+            font-size: 16px;
+            text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.1);
+            border-right: 1px solid #C1C3D1;
+            word-break: break-all;
+        }
+        
+        /* [추가] 긴 텍스트를 위한 스크롤 박스 스타일 */
+        .scrollable-box {
+            max-height: 150px; /* 박스의 최대 높이 지정 */
+            overflow-y: auto;  /* 내용이 넘칠 경우 세로 스크롤 생성 */
+            padding-right: 10px; /* 스크롤바와 텍스트 사이 여백 */
+            white-space: pre-wrap; /* 공백과 줄바꿈 유지하며 자동 줄바꿈 */
+        }
+
+        td:first-child {
+            font-weight: 500;
+        }
+
+        td:last-child { border-right: 0px; }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="table-title">
+        <h3>보안 뉴스 - 보안 정책</h3>
+    </div>
+
+    <div class="top-right-container">
+        <a href="{{ url_for('threadAll.downloadSecure') }}" class="write-link">다운로드</a>
+        <a href="{{ url_for('threadAll.allThreads') }}" class="write-link">뒤로가기</a>
+    </div>
+
+    <table class="table-fill">
+        <thead>
+            <tr>
+                <th style="width: 25%; color:white;">제목</th>
+                <th style="width: 25%;color:white;">링크</th>
+                <th style="width: 50%;color:white;">요약</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for entry in feed.entries %}
+            <tr>
+                <td>{{ entry.title }}</td>
+                <td><a href="{{ entry.link }}" target="_blank" rel="noopener noreferrer">{{ entry.link }}</a></td>
+                <td>
+                    <div class="scrollable-box">{{ entry.description | striptags }}</div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</body>
+</html>
