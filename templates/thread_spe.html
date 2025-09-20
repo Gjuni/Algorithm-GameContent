@@ -195,7 +195,7 @@
         <!-- 댓글 목록 -->
         <div class="comments-list">
           {% if post.comments %}
-            {% for comment in post.comments %}
+            {% for comment in post.comments|sort(attribute='uploadDate', reverse=True) %}
             <div class="comment-item">
               <div class="comment-content gowun-dodum-regular">{{ comment.comment }}</div>
               <p class="comment-date gowun-dodum-regular">{{ comment.uploadDate.strftime('%Y-%m-%d %H:%M') }}</p>
