@@ -2,10 +2,14 @@ from flask import Flask
 from flask import render_template, Blueprint, request, redirect, url_for
 from config.mongodb import get_db
 from bson.objectid import ObjectId
+from datetime import timedelta
 
 from datetime import datetime, timezone  # UTC는 timezone.utc로 사용 가능
 
 comment = Blueprint('commnet', __name__, url_prefix='/commnet')
+
+# KST(한국 표준시) = UTC+9
+KST = timezone(timedelta(hours=9))
 
 @comment.route("/<thread_id>")
 def add(thread_id):
@@ -24,9 +28,11 @@ def add(thread_id):
             # comment 가 존재합니다.
             threads = db['thread']
 
+            now = datetime.now(KST).strftime("%Y-%m-%d %H:%M:%S")
+
             result = threads.update_one(
                 {"_id": convId}, 
-                {"$push": {"comments": {"comment": comments, "uploadDate": datetime.now(timezone.utc)}}}
+                {"$push": {"comments": {"comment": comments, "uploadDate": now}}}
             )
             
             return redirect(url_for('thread.getOne', thread_id=thread_id))
