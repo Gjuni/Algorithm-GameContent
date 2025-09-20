@@ -83,6 +83,9 @@ API 구현
 	/secureNews : 보안 뉴스 RSS
 	/downloadDaily : 데일리시큐 RSS 엑셀 파일 다운로드
 	/downloadSecure : 보안 뉴스 RSS 엑셀 파일 다운로드
+		
+/commnet
+	/<thread_id> : 해당 게시물에 댓글 작성
 
   </code>
 </pre>
