@@ -1,11 +1,14 @@
 from flask import Blueprint, render_template, request, redirect, url_for, send_file
-from datetime import datetime, timezone  # UTC는 timezone.utc로 사용 가능
+from datetime import datetime, timezone, timedelta
 from config.mongodb import get_db
 from bson.objectid import ObjectId
 from config.RSS import dailySecure, downloadDailySecure
 from config.RSS import sercureRule, downloadsercureRule
 
 thread = Blueprint('thread', __name__, url_prefix='/thread')
+
+# KST(한국 표준시) = UTC+9
+KST = timezone(timedelta(hours=9))
 
 @thread.route('/write', methods=['GET'])
 def writePage():
@@ -15,20 +18,23 @@ def writePage():
 # 글 작성 처리 (POST)
 @thread.route('/upload', methods=['POST'])
 def writePost():
-    print("check writepost")
-    db = get_db("school")
+    db = get_db()
     threads = db['thread']
 
     title = request.form['title']
     body = request.form['body']
 
+    now = datetime.now(KST).strftime("%Y-%m-%d %H:%M:%S")
+
     threads.insert_one({
         "threadTitle": title,
         "threadBody": body,
-        "uploadDate": datetime.now(timezone.utc)
+        "comments" : [],
+        "uploadDate": now
     })
 
     return redirect(url_for('thread.allThreads'))
+
 
 # 글 전체 보기 (목록)
 @thread.route('/all', methods=['GET'])
