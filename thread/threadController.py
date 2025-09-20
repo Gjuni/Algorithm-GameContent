@@ -29,7 +29,7 @@ def writePost():
     threads.insert_one({
         "threadTitle": title,
         "threadBody": body,
-        "comment" : [],
+        "comments" : [],
         "uploadDate": now
     })
 

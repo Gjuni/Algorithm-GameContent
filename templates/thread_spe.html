@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>게시글 상세 보기</title>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,19 +17,41 @@
       font-weight: 400;
       font-style: normal;
     }
-    .post-body, #translated-text {
-      line-height: 1.8;
-      white-space: pre-wrap;
-      min-height: 100px;
+
+    /* 게시글 표시 상자 스타일 (댓글 스타일과 유사하게) */
+    .post-display-box {
+      background: white;
+      border-radius: 15px;
+      padding: 25px;
+      margin-bottom: 30px;
+      border-left: 5px solid #764ba2;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      position: relative;
     }
-    /* ▼▼▼ [수정] 오른쪽 상단 버튼을 위한 CSS 추가 ▼▼▼ */
+    .post-display-box .post-title {
+      font-size: 1.7rem;
+      font-weight: 600;
+      margin-bottom: 5px;
+      padding-right: 100px; /* 버튼과 겹치지 않도록 여백 확보 */
+    }
+    .post-display-box .post-date {
+      font-size: 0.9rem;
+      color: #666;
+      margin-bottom: 15px;
+    }
+    .post-display-box .post-body {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: #333;
+      white-space: pre-wrap;
+      margin-top: 20px;
+    }
     .list-button-top-right {
         position: absolute;
-        top: 20px;
-        right: 20px;
+        top: 25px;
+        right: 25px;
     }
 
-    /* 댓글 섹션 스타일 */
     .comments-section {
       background: white;
       border-radius: 15px;
@@ -42,83 +63,76 @@
     .comments-header {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
-      padding: 25px;
+      padding: 15px 20px;
     }
 
     .comments-title {
-      font-size: 1.5rem;
+      font-size: 1.3rem;
       font-weight: 600;
       margin: 0;
     }
 
     .comment-form {
-      padding: 30px;
+      padding: 20px;
       border-bottom: 1px solid #e9ecef;
     }
 
-    .comment-form textarea {
-      border: 2px solid #e9ecef;
-      border-radius: 10px;
-      padding: 15px;
-      font-size: 1rem;
+    /* .form-control을 사용하는 textarea에 대한 스타일 조정 */
+    .comment-form .form-control {
       font-family: "Gowun Dodum", serif;
-      transition: all 0.3s ease;
-      resize: vertical;
-      min-height: 100px;
-      width: 100%;
-    }
-
-    .comment-form textarea:focus {
-      border-color: #667eea;
-      box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+      font-size: 0.9rem;
+      padding: .5rem .75rem;
+      line-height: 1.5;
     }
 
     .comment-submit-btn {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       border: none;
       border-radius: 25px;
-      padding: 12px 30px;
+      padding: 8px 20px;
       font-weight: 500;
-      font-size: 1rem;
+      font-size: 0.9rem;
       color: white;
       transition: all 0.3s ease;
-      margin-top: 15px;
+      text-decoration: none; /* a 태그에 적용될 경우 밑줄 제거 */
     }
 
     .comment-submit-btn:hover {
       transform: translateY(-2px);
       box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+      color: white; /* a 태그에 적용될 경우 색상 유지 */
     }
-
+    
     .comments-list {
-      padding: 30px;
+      padding: 20px;
+      padding-top: 10px; /* 댓글 폼과의 간격 조정 */
     }
 
     .comment-item {
       background: #f8f9fa;
       border-radius: 10px;
-      padding: 20px;
-      margin-bottom: 20px;
+      padding: 15px;
+      margin-bottom: 15px;
       border-left: 4px solid #667eea;
     }
 
     .comment-content {
-      font-size: 1rem;
+      font-size: 0.95rem;
       line-height: 1.6;
       color: #333;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       white-space: pre-wrap;
     }
 
     .comment-date {
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       color: #666;
       margin: 0;
     }
 
     .no-comments {
       text-align: center;
-      padding: 40px;
+      padding: 30px;
       color: #666;
       font-style: italic;
     }
@@ -126,63 +140,42 @@
     /* 반응형 디자인 */
     @media (max-width: 768px) {
       .comments-header {
-        padding: 20px;
+        padding: 15px;
       }
 
       .comments-title {
-        font-size: 1.3rem;
+        font-size: 1.2rem;
       }
 
       .comment-form {
-        padding: 20px;
+        padding: 15px;
       }
 
       .comments-list {
-        padding: 20px;
+        padding: 15px;
       }
 
       .comment-item {
-        padding: 15px;
+        padding: 12px;
       }
     }
   </style>
 </head>
 <body class="bg-light">
 
-<a href="{{ url_for('thread.allThreads') }}" class="btn btn-primary gowun-dodum-regular list-button-top-right">
-    게시글 목록 보기
-</a>
-
 <div class="container mt-5">
   <div class="row justify-content-center">
     <div class="col-lg-10">
 
-      <div class="card shadow-sm">
-        <div class="card-header bg-white py-3">
-          <h1 class="h3 mb-1 gowun-dodum-regular">{{ post.threadTitle }}</h1>
-          <div class="text-muted small">작성일: {{ post.uploadDate }}</div>
-        </div>
-        <div class="card-body p-4">
-
-          <div class="text-center mb-4">
-            <button id="translate-btn" class="btn btn-secondary">번역하기</button>
-          </div>
-
-          <div id="content-row" class="row justify-content-center">
-
-            <div id="original-column" class="col-md-10">
-              <h5 class="gowun-dodum-regular mb-3">📜 원본</h5>
-              <p id="post-body" class="post-body gowun-dodum-regular">{{ post.threadBody }}</p>
-            </div>
-
-            <div id="translation-column" class="col-md-6 d-none">
-              <h5 class="gowun-dodum-regular mb-3">🌐 번역문</h5>
-              <div id="translated-text" class="text-muted"></div>
-            </div>
-
-          </div>
-
-        </div>
+      <!-- 게시글 본문 (댓글 스타일 적용) -->
+      <div class="post-display-box">
+        <a href="{{ url_for('thread.allThreads') }}" class="comment-submit-btn list-button-top-right gowun-dodum-regular">
+            목록
+        </a>
+        <h1 class="post-title gowun-dodum-regular">{{ post.threadTitle }}</h1>
+        <p class="post-date gowun-dodum-regular">작성일: {{ post.uploadDate }}</p>
+        <hr>
+        <div class="post-body gowun-dodum-regular">{{ post.threadBody }}</div>
       </div>
 
       <!-- 댓글 섹션 -->
@@ -193,11 +186,9 @@
         
         <!-- 댓글 작성 폼 -->
         <div class="comment-form">
-          <form action="{{ url_for('commnet.add', thread_id=post._id) }}" method="POST">
-            <div class="mb-3">
-              <textarea name="comments" class="form-control" placeholder="댓글을 작성해주세요..." required></textarea>
-            </div>
-            <button type="submit" class="comment-submit-btn gowun-dodum-regular">댓글 작성</button>
+          <form action="{{ url_for('commnet.add', thread_id=post._id) }}" method="POST" class="d-flex align-items-start gap-2">
+            <textarea name="comments" class="form-control gowun-dodum-regular" placeholder="댓글을 작성해주세요..." required rows="1" oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"'></textarea>
+            <button type="submit" class="comment-submit-btn gowun-dodum-regular flex-shrink-0">작성</button>
           </form>
         </div>
         
@@ -221,59 +212,6 @@
       </div>
   </div>
 </div>
-
-<script>
-$(function() {
-  $("#translate-btn").click(function() {
-    // 1. 레이아웃 변경
-    const contentRow = $('#content-row');
-    const originalColumn = $('#original-column');
-    const translationColumn = $('#translation-column');
-
-    // 버튼을 처음 눌렀을 때만 레이아웃 변경 실행
-    if (originalColumn.hasClass('col-md-10')) {
-      // 부모 row의 가운데 정렬을 해제
-      contentRow.removeClass('justify-content-center');
-      
-      // 원본 컬럼의 너비를 절반으로 줄이고 구분선 추가
-      originalColumn.removeClass('col-md-10').addClass('col-md-6 border-end');
-
-      // 번역 컬럼을 보이게 함
-      translationColumn.removeClass('d-none');
-    }
-
-    // 2. 번역 실행
-    const text = $("#post-body").text().trim();
-    if(!text) {
-      $("#translated-text").text("[본문이 없습니다]");
-      return;
-    }
-
-    $("#translated-text").text("번역 중입니다...");
-    $(this).prop("disabled", true);
-
-    $.ajax({
-      type: "POST",
-      url: "/translate/",
-      contentType: "application/json",
-      data: JSON.stringify({ text: text }),
-      success: function(response) {
-        if(response.translated){
-          $("#translated-text").text(response.translated);
-        } else if(response.error){
-          $("#translated-text").text("번역 오류: " + response.error);
-        }
-        $("#translate-btn").prop("disabled", false);
-      },
-      error: function(err) {
-        console.error(err);
-        $("#translated-text").text("번역 중 서버 오류 발생");
-        $("#translate-btn").prop("disabled", false);
-      }
-    });
-  });
-});
-</script>
 
 </body>
 </html>
