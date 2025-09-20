@@ -47,8 +47,12 @@ def getOne(thread_id):
     convId = ObjectId(thread_id)
     db = get_db("school")
 
-    doc = db.find_one({"_id": convId})
-    return doc
+    doc = db['thread'].find_one({"_id": convId})
+    
+    if 'comments' not in doc:
+        doc['comments'] = []
+    
+    return render_template('thread_spe.html', post=doc)
 
 
 
