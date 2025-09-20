@@ -18,113 +18,129 @@
       font-weight: 400;
       font-style: normal;
     }
-    .post-body, #translated-text {
-      line-height: 1.8;
-      white-space: pre-wrap;
-      min-height: 100px;
+    
+    body {
+      font-family: "Gowun Dodum", serif;
+      background-color: #f8f9fa;
     }
-    /* ▼▼▼ [수정] 오른쪽 상단 버튼을 위한 CSS 추가 ▼▼▼ */
-    .list-button-top-right {
-        position: absolute;
-        top: 20px;
-        right: 20px;
+    
+    .post-card {
+      border: none;
+      border-radius: 15px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      margin-bottom: 30px;
+    }
+    
+    .post-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 30px;
+      border: none;
+    }
+    
+    .post-title {
+      font-size: 2rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+      line-height: 1.3;
+    }
+    
+    .post-meta {
+      font-size: 1rem;
+      opacity: 0.9;
+      margin: 0;
+    }
+    
+    .post-body {
+      padding: 40px;
+      background: white;
+      line-height: 1.8;
+      font-size: 1.1rem;
+      color: #333;
+      white-space: pre-wrap;
+      word-break: break-word;
+      min-height: 200px;
+    }
+    
+    .back-button {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      border-radius: 25px;
+      padding: 12px 30px;
+      font-size: 1rem;
+      font-weight: 500;
+      color: white;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+    
+    .back-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+      color: white;
+      text-decoration: none;
+    }
+    
+    .button-container {
+      text-align: center;
+      padding: 30px;
+      background: white;
+    }
+    
+    /* 반응형 디자인 */
+    @media (max-width: 768px) {
+      .post-header {
+        padding: 20px;
+      }
+      
+      .post-title {
+        font-size: 1.5rem;
+      }
+      
+      .post-body {
+        padding: 25px;
+        font-size: 1rem;
+      }
+      
+      .back-button {
+        padding: 10px 25px;
+        font-size: 0.9rem;
+      }
     }
   </style>
 </head>
-<body class="bg-light">
-
-<a href="{{ url_for('thread.allThreads') }}" class="btn btn-primary gowun-dodum-regular list-button-top-right">
-    게시글 목록 보기
-</a>
+<body>
 
 <div class="container mt-5">
   <div class="row justify-content-center">
     <div class="col-lg-10">
 
-      <div class="card shadow-sm">
-        <div class="card-header bg-white py-3">
-          <h1 class="h3 mb-1 gowun-dodum-regular">{{ post.threadTitle }}</h1>
-          <div class="text-muted small">작성일: {{ post.uploadDate }}</div>
+      <div class="card post-card">
+        <!-- 게시글 헤더 -->
+        <div class="post-header">
+          <h1 class="post-title gowun-dodum-regular">{{ doc.threadTitle }}</h1>
+          <p class="post-meta gowun-dodum-regular">작성일: {{ doc.uploadDate }}</p>
         </div>
-        <div class="card-body p-4">
-
-          <div class="text-center mb-4">
-            <button id="translate-btn" class="btn btn-secondary">번역하기</button>
-          </div>
-
-          <div id="content-row" class="row justify-content-center">
-
-            <div id="original-column" class="col-md-10">
-              <h5 class="gowun-dodum-regular mb-3">📜 원본</h5>
-              <p id="post-body" class="post-body gowun-dodum-regular">{{ post.threadBody }}</p>
-            </div>
-
-            <div id="translation-column" class="col-md-6 d-none">
-              <h5 class="gowun-dodum-regular mb-3">🌐 번역문</h5>
-              <div id="translated-text" class="text-muted"></div>
-            </div>
-
-          </div>
-
+        
+        <!-- 게시글 내용 -->
+        <div class="post-body gowun-dodum-regular">
+          {{ doc.threadBody }}
         </div>
       </div>
-
+      
+      <!-- 뒤로가기 버튼 컨테이너 -->
+      <div class="button-container">
+        <a href="{{ url_for('thread.allThreads') }}" class="back-button gowun-dodum-regular">
+          ← 게시글 목록 보기
+        </a>
       </div>
+
+    </div>
   </div>
 </div>
-
-<script>
-$(function() {
-  $("#translate-btn").click(function() {
-    // 1. 레이아웃 변경
-    const contentRow = $('#content-row');
-    const originalColumn = $('#original-column');
-    const translationColumn = $('#translation-column');
-
-    // 버튼을 처음 눌렀을 때만 레이아웃 변경 실행
-    if (originalColumn.hasClass('col-md-10')) {
-      // 부모 row의 가운데 정렬을 해제
-      contentRow.removeClass('justify-content-center');
-      
-      // 원본 컬럼의 너비를 절반으로 줄이고 구분선 추가
-      originalColumn.removeClass('col-md-10').addClass('col-md-6 border-end');
-
-      // 번역 컬럼을 보이게 함
-      translationColumn.removeClass('d-none');
-    }
-
-    // 2. 번역 실행
-    const text = $("#post-body").text().trim();
-    if(!text) {
-      $("#translated-text").text("[본문이 없습니다]");
-      return;
-    }
-
-    $("#translated-text").text("번역 중입니다...");
-    $(this).prop("disabled", true);
-
-    $.ajax({
-      type: "POST",
-      url: "/translate/",
-      contentType: "application/json",
-      data: JSON.stringify({ text: text }),
-      success: function(response) {
-        if(response.translated){
-          $("#translated-text").text(response.translated);
-        } else if(response.error){
-          $("#translated-text").text("번역 오류: " + response.error);
-        }
-        $("#translate-btn").prop("disabled", false);
-      },
-      error: function(err) {
-        console.error(err);
-        $("#translated-text").text("번역 중 서버 오류 발생");
-        $("#translate-btn").prop("disabled", false);
-      }
-    });
-  });
-});
-</script>
 
 </body>
 </html>

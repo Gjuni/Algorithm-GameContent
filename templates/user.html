@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Login</title>
+    <link href="https://fonts.googleapis.com/css?family=Asap" rel="stylesheet">
+    <style>
+        /* scss->css변환
+         */
+
+        /* 변수 선언 (CSS 변수로 변환) */
+        :root {
+            --greenSeaweed: rgba(2, 128, 144, 1);
+            --blueQueen: rgba(69, 105, 144, 1);
+            --redFire: rgba(244, 91, 105, 1);
+            --fontAsap: 'Asap', sans-serif;
+        }
+
+        body {
+            background-color: var(--redFire);
+            font-family: var(--fontAsap);
+        }
+
+        .login {
+            overflow: hidden;
+            background-color: white;
+            padding: 40px 30px 30px 30px;
+            border-radius: 10px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 400px;
+            transform: translate(-50%, -50%);
+            transition: transform 300ms, box-shadow 300ms;
+            box-shadow: 5px 10px 10px rgba(2, 128, 144, 0.2);
+            z-index: 1; /* 애니메이션이 뒤에 있도록 z-index 추가 */
+        }
+
+        .login::before, .login::after {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            border-top-left-radius: 40%;
+            border-top-right-radius: 45%;
+            border-bottom-left-radius: 35%;
+            border-bottom-right-radius: 40%;
+            z-index: -1;
+        }
+
+        .login::before {
+            left: 40%;
+            bottom: -130%;
+            background-color: rgba(69, 105, 144, 0.15);
+            animation: wawes 6s infinite linear;
+        }
+
+        .login::after {
+            left: 35%;
+            bottom: -125%;
+            background-color: rgba(2, 128, 144, 0.2);
+            animation: wawes 7s infinite;
+        }
+
+        
+        .login input[type="text"],
+        .login input[type="password"] {
+            font-family: var(--fontAsap);
+            display: block;
+            border-radius: 5px;
+            font-size: 16px;
+            background: white;
+            width: 100%;
+            border: 1px solid #ddd; /* 테두리를 살짝 추가하여 가시성 확보 */
+            padding: 10px;
+            margin: 15px 0;
+            box-sizing: border-box; /* 패딩이 너비에 포함되도록 설정 */
+        }
+
+        /* * '메일 전송' 버튼과 'login' 버튼에 동일한 스타일
+         */
+        .login button {
+            font-family: var(--fontAsap);
+            cursor: pointer;
+            color: #fff;
+            font-size: 16px;
+            text-transform: uppercase;
+            width: 120px; /* 버튼 너비 확장 */
+            border: 0;
+            padding: 10px 0;
+            margin-top: 10px;
+            border-radius: 5px;
+            background-color: var(--redFire);
+            transition: background-color 300ms;
+        }
+
+        .login button:hover {
+            background-color: #e05060; /* darken($redFire, 5%) */
+        }
+        
+        .login button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        @keyframes wawes {
+            from { transform: rotate(0); }
+            to { transform: rotate(360deg); }
+        }
+        
+        /* h1 태그는 디자인에 포함되지 않아 숨김 처리 */
+        h1 {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <form class="login" method="post" action="{{ url_for('user.login') }}" onsubmit="return validateForm()">
+        <input type="text" id="email" name="email" placeholder="Email">
+        <button type="button" id="send-mail" onclick="sendOneTimeMail()">Send Mail</button>
+
+        <div id="password-section" style="display: none;">
+            <input type="password" id="password" name="password" placeholder="Password">
+            <button type="submit">login</button>
+        </div>
+    </form>
+
+    <script>
+        async function sendOneTimeMail() {
+            const email = document.getElementById('email').value;
+            const sendButton = document.getElementById('send-mail');
+
+            if (email.trim() === '') {
+                alert('input Email');
+                return;
+            }
+
+            sendButton.disabled = true;
+            sendButton.textContent = 'sending...';
+
+            try {
+                const response = await fetch("{{ url_for('user.code') }}", {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email }),
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('check your mail mail sent');
+                    document.getElementById('password-section').style.display = 'block';
+                } else {
+                    alert('메일 전송에 실패했습니다. 다시 시도해주세요.');
+                    sendButton.disabled = false;
+                    sendButton.textContent = 'Send Mail';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+                sendButton.disabled = false;
+                sendButton.textContent = 'Send Mail';
+            }
+        }
+
+        function validateForm() {
+            const password = document.getElementById('password').value;
+            if (password.trim() === '') {
+                alert('input password');
+                return false;
+            }
+            return true;
+        }
+    </script>
+</body>
+</html>

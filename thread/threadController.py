@@ -1,11 +1,14 @@
-from flask import Blueprint, render_template, request, redirect, url_for, send_file
-from datetime import datetime, timezone  # UTC는 timezone.utc로 사용 가능
+from flask import Blueprint, render_template, request, redirect, url_for, send_file, jsonify
+from datetime import datetime, timezone, timedelta  
 from config.mongodb import get_db
 from bson.objectid import ObjectId
 from config.RSS import dailySecure, downloadDailySecure
 from config.RSS import sercureRule, downloadsercureRule
 
 thread = Blueprint('thread', __name__, url_prefix='/thread')
+
+# KST(한국 표준시) = UTC+9
+KST = timezone(timedelta(hours=9))
 
 @thread.route('/write', methods=['GET'])
 def writePage():
@@ -15,17 +18,19 @@ def writePage():
 # 글 작성 처리 (POST)
 @thread.route('/upload', methods=['POST'])
 def writePost():
-    print("check writepost")
     db = get_db()
     threads = db['thread']
 
     title = request.form['title']
     body = request.form['body']
 
+    now = datetime.now(KST).strftime("%Y-%m-%d %H:%M:%S")
+
     threads.insert_one({
         "threadTitle": title,
         "threadBody": body,
-        "uploadDate": datetime.now(timezone.utc)
+        "comment" : [],
+        "uploadDate": now
     })
 
     return redirect(url_for('thread.allThreads'))
@@ -36,7 +41,7 @@ def allThreads():
     print("check allthread")
     db = get_db()
     
-    threads = list(db['thread'].find().sort("uploadDate", -1))
+    threads = list(db['thread'].find().sort("uploadDate", -1)) # 가장 최신의 게시물 기준으로 오름차순
     
     return render_template('thread_all.html', threads=threads)
 
@@ -44,13 +49,10 @@ def allThreads():
 # 글 상세 보기
 @thread.route('/<thread_id>')
 def getOne(thread_id):
-    convId = ObjectId(thread_id)
-    db = get_db()
+    db = get_db()['thread']
+    doc = db.find_one({"_id": ObjectId(thread_id)})
 
-    doc = db.find_one({"_id": convId})
-    return doc
-
-
+    return render_template('thread_spe.html', doc=doc)
 
 @thread.route('/dailySecure', methods=['GET'])
 def dailyNews():
