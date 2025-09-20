@@ -75,7 +75,7 @@ API 구현
 	/login : 로그인 로직
 
 /thread
-    /<thread_id> : 게시글 상세 조회
+    /:thread_id : 게시글 상세 조회
 	/write : 글 작성 페이지로 라우팅
 	/upload : 글 작성
 	/all : 글 전체 조회
@@ -85,7 +85,7 @@ API 구현
 	/downloadSecure : 보안 뉴스 RSS 엑셀 파일 다운로드
 		
 /commnet
-	/<thread_id> : 해당 게시물에 댓글 작성
+	/:thread_id : 해당 게시물에 댓글 작성
 
   </code>
 </pre>
